@@ -3,9 +3,6 @@ import { useState, useEffect } from "react";
 import AssignDialog from "../components/appointment/AssignDialog";
 import NewAppointmentDialog from "../components/appointment/NewAppointmentDialog";
 
-import initialAppointments from "../data/appointments";
-import staffsData from "../data/staffs";
-
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 
@@ -16,67 +13,59 @@ export default function AppointmentAssignment() {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [search, setSearch] = useState("");
 
-  const [appointments, setAppointments] = useState(() => {
-    const savedAppointments = localStorage.getItem("appointments");
+  const [appointments, setAppointments] = useState([]);
+  const [staffs, setStaffs] = useState([]);
 
-    return savedAppointments
-      ? JSON.parse(savedAppointments)
-      : initialAppointments;
-  });
+  const loadAppointments = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/appointments");
+      const data = await res.json();
+      setAppointments(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const staffs = JSON.parse(localStorage.getItem("staffs")) || staffsData;
+  const loadStaffs = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/staffs");
+      const data = await res.json();
+      setStaffs(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    localStorage.setItem("appointments", JSON.stringify(appointments));
-  }, [appointments]);
+    const fetchData = async () => {
+      await loadAppointments();
+      await loadStaffs();
+    };
 
-  const handleAssign = (staffName) => {
-    setAppointments(
-      appointments.map((item) =>
-        item.id === selectedAppointment.id
-          ? { ...item, staff: staffName }
-          : item,
-      ),
-    );
-  };
+    fetchData();
+  }, []);
 
-  const handleAddAppointment = (newAppointment) => {
-    setAppointments([...appointments, newAppointment]);
-  };
-
-  const handleEditCustomer = (appointment) => {
-    const newCustomer = prompt(
-      "Enter new customer name:",
-      appointment.customer,
-    );
-
-    if (!newCustomer) return;
-
-    setAppointments(
-      appointments.map((item) =>
-        item.id === appointment.id
-          ? {
-              ...item,
-              customer: newCustomer,
-            }
-          : item,
-      ),
-    );
-  };
-
-  const handleDeleteAppointment = (id) => {
+  const handleDeleteAppointment = async (id) => {
     const confirmDelete = window.confirm("Delete this appointment?");
 
     if (!confirmDelete) return;
 
-    setAppointments(appointments.filter((item) => item.id !== id));
+    try {
+      await fetch(`http://localhost:5000/api/appointments/${id}`, {
+        method: "DELETE",
+      });
+
+      loadAppointments();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const filteredAppointments = appointments.filter(
     (appointment) =>
-      appointment.customer.toLowerCase().includes(search.toLowerCase()) ||
-      appointment.staff.toLowerCase().includes(search.toLowerCase()) ||
-      appointment.service.toLowerCase().includes(search.toLowerCase()),
+      appointment.customer?.toLowerCase().includes(search.toLowerCase()) ||
+      appointment.staff?.toLowerCase().includes(search.toLowerCase()) ||
+      appointment.service?.toLowerCase().includes(search.toLowerCase()),
   );
 
   const activeStaffCount = staffs.filter(
@@ -85,16 +74,15 @@ export default function AppointmentAssignment() {
 
   return (
     <div className="p-8">
-      {" "}
       <div className="flex justify-between items-center mb-6">
-        {" "}
-        <h1 className="text-3xl font-bold">Appointment Assignment </h1>
+        <h1 className="text-3xl font-bold">Appointment Assignment</h1>
+
         <Button onClick={() => setOpenNew(true)}>New Appointment</Button>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="border rounded-lg p-4">
           <p className="text-gray-500">Total Appointments</p>
-
           <p className="text-3xl font-bold">{appointments.length}</p>
         </div>
 
@@ -115,6 +103,7 @@ export default function AppointmentAssignment() {
           <p className="text-3xl font-bold">{activeStaffCount}</p>
         </div>
       </div>
+
       <div className="mb-6">
         <Input
           className="shadow-sm"
@@ -123,44 +112,54 @@ export default function AppointmentAssignment() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
+
       <table className="w-full border">
         <thead>
           <tr className="border-b bg-gray-50">
             <th className="p-3 text-left">Customer</th>
-
             <th className="p-3 text-left">Staff</th>
-
             <th className="p-3 text-left">Service</th>
-
             <th className="p-3 text-left">Date</th>
-
             <th className="p-3 text-left">Time</th>
-
+            <th className="p-3 text-left">Status</th>
             <th className="p-3 text-left">Action</th>
           </tr>
         </thead>
 
         <tbody>
           {filteredAppointments.map((appointment) => (
-            <tr
-              key={appointment.id}
-              className="border-b hover:bg-gray-50 transition"
-            >
-              <td className="p-3 font-medium">{appointment.customer}</td>
+            <tr key={appointment.id} className="border-b hover:bg-gray-50">
+              <td className="p-3">{appointment.customer}</td>
 
-              <td className="p-3">{appointment.staff}</td>
+              <td className="p-3">{appointment.staff || "Unassigned"}</td>
 
               <td className="p-3">{appointment.service}</td>
 
-              <td className="p-3">{appointment.date}</td>
+              <td className="p-3">
+                {appointment.date
+                  ? new Date(appointment.date).toLocaleDateString("vi-VN")
+                  : "-"}
+              </td>
 
-              <td className="p-3">{appointment.time}</td>
+              <td className="p-3">
+                {appointment.time ? appointment.time.slice(0, 5) : "-"}
+              </td>
+
+              <td className="p-3">
+                <span
+                  className={`px-2 py-1 rounded text-sm ${
+                    appointment.status === "Confirmed"
+                      ? "bg-green-100 text-green-700"
+                      : appointment.status === "Pending"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  {appointment.status}
+                </span>
+              </td>
 
               <td className="p-3 flex gap-2">
-                <Button onClick={() => handleEditCustomer(appointment)}>
-                  Edit
-                </Button>
-
                 <Button
                   variant="destructive"
                   onClick={() => handleDeleteAppointment(appointment.id)}
@@ -179,27 +178,40 @@ export default function AppointmentAssignment() {
               </td>
             </tr>
           ))}
-
-          {filteredAppointments.length === 0 && (
-            <tr>
-              <td colSpan={6} className="text-center p-4">
-                No appointments found
-              </td>
-            </tr>
-          )}
         </tbody>
       </table>
+
       <AssignDialog
         open={open}
         setOpen={setOpen}
         appointment={selectedAppointment}
         staffs={staffs}
-        onAssign={handleAssign}
+        onAssign={async (staffId) => {
+          try {
+            await fetch(
+              `http://localhost:5000/api/appointments/${selectedAppointment.id}`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  staff_id: Number(staffId),
+                }),
+              },
+            );
+
+            loadAppointments();
+          } catch (error) {
+            console.error(error);
+          }
+        }}
       />
+
       <NewAppointmentDialog
         open={openNew}
         setOpen={setOpenNew}
-        onAdd={handleAddAppointment}
+        onAdd={() => loadAppointments()}
       />
     </div>
   );

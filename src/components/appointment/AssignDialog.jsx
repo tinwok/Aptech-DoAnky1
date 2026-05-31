@@ -11,12 +11,17 @@ export default function AssignDialog({
 }) {
   const [selectedStaff, setSelectedStaff] = useState("");
 
-  const handleSave = () => {
-    if (!selectedStaff) return;
+  const handleSave = async () => {
+    if (!selectedStaff || !appointment) return;
 
-    onAssign(selectedStaff);
+    try {
+      await onAssign(selectedStaff);
 
-    setOpen(false);
+      setSelectedStaff("");
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const activeStaffs = staffs.filter((staff) => staff.status === "Active");
@@ -45,7 +50,7 @@ export default function AssignDialog({
             <option value="">Select Staff</option>
 
             {activeStaffs.map((staff) => (
-              <option key={staff.id} value={staff.name}>
+              <option key={staff.id} value={staff.id}>
                 {staff.name}
               </option>
             ))}

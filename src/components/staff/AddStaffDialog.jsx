@@ -10,8 +10,12 @@ export default function AddStaffDialog({ open, setOpen, onAdd }) {
   const [phone, setPhone] = useState("");
 
   const handleSave = () => {
+    if (!name || !email || !phone) {
+      alert("Please fill all fields");
+      return;
+    }
+
     onAdd({
-      id: Date.now(),
       name,
       email,
       phone,
@@ -28,11 +32,13 @@ export default function AddStaffDialog({ open, setOpen, onAdd }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
+      {" "}
       <DialogContent>
+        {" "}
         <DialogHeader>
-          <DialogTitle>Add Staff</DialogTitle>
+          {" "}
+          <DialogTitle>Add Staff</DialogTitle>{" "}
         </DialogHeader>
-
         <div className="space-y-4">
           <Input
             placeholder="Name"

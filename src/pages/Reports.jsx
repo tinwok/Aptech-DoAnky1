@@ -1,71 +1,74 @@
-import staffsData from "../data/staffs";
-import appointmentsData from "../data/appointments";
-import customersData from "../data/customers";
-import servicesData from "../data/services";
+import { useState, useEffect } from "react";
 
 export default function Reports() {
-  const staffs = JSON.parse(localStorage.getItem("staffs")) || staffsData;
+  const [staffs, setStaffs] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [services, setServices] = useState([]);
+  const [appointments, setAppointments] = useState([]);
 
-  const customers =
-    JSON.parse(localStorage.getItem("customers")) || customersData;
+  const loadData = async () => {
+    try {
+      const [staffRes, customerRes, serviceRes, appointmentRes] =
+        await Promise.all([
+          fetch("http://localhost:5000/api/staffs"),
+          fetch("http://localhost:5000/api/customers"),
+          fetch("http://localhost:5000/api/services"),
+          fetch("http://localhost:5000/api/appointments"),
+        ]);
 
-  const services = JSON.parse(localStorage.getItem("services")) || servicesData;
+      const staffsData = await staffRes.json();
+      const customersData = await customerRes.json();
+      const servicesData = await serviceRes.json();
+      const appointmentsData = await appointmentRes.json();
 
-  const appointments =
-    JSON.parse(localStorage.getItem("appointments")) || appointmentsData;
+      setStaffs(staffsData);
+      setCustomers(customersData);
+      setServices(servicesData);
+      setAppointments(appointmentsData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await loadData();
+    };
+
+    fetchData();
+  }, []);
 
   const totalStaff = staffs.length;
+  const totalCustomers = customers.length;
+  const totalAppointments = appointments.length;
+  const totalServices = services.length;
 
   const activeStaff = staffs.filter(
     (staff) => staff.status === "Active",
   ).length;
 
-  const totalCustomers = customers.length;
+  const totalRevenue = services.reduce(
+    (sum, service) => sum + Number(service.price || 0),
+    0,
+  );
 
-  const totalAppointments = appointments.length;
+  const bestStaff = staffs.length > 0 ? staffs[0] : null;
 
-  const totalServices = services.length;
+  const topCustomer = customers.length > 0 ? customers[0] : null;
 
-  const totalRevenue = appointments.reduce((sum, appointment) => {
-    const service = services.find((s) => s.name === appointment.service);
-
-    return sum + (service?.price || 0);
-  }, 0);
-
-  const bestStaff =
-    staffs.length > 0
-      ? staffs.reduce((best, current) =>
-          current.assignedCustomers > best.assignedCustomers ? current : best,
+  const topService =
+    services.length > 0
+      ? services.reduce((best, current) =>
+          Number(current.price) > Number(best.price) ? current : best,
         )
       : null;
-
-  const topCustomer =
-    customers.length > 0
-      ? customers.reduce((best, current) =>
-          current.visits > best.visits ? current : best,
-        )
-      : null;
-
-  const serviceCount = {};
-
-  appointments.forEach((appointment) => {
-    serviceCount[appointment.service] =
-      (serviceCount[appointment.service] || 0) + 1;
-  });
-
-  const mostPopularService =
-    Object.keys(serviceCount).length > 0
-      ? Object.keys(serviceCount).reduce((a, b) =>
-          serviceCount[a] > serviceCount[b] ? a : b,
-        )
-      : "No Service";
 
   const recentAppointments = [...appointments].reverse();
 
   return (
     <div className="p-8">
-      {" "}
-      <h1 className="text-3xl font-bold mb-8">Reports </h1>
+      <h1 className="text-3xl font-bold mb-8">Reports</h1>
+
       <div className="grid grid-cols-3 gap-6 mb-8">
         <div className="border rounded-lg p-6">
           <h2 className="text-gray-500">Total Revenue</h2>
@@ -105,19 +108,18 @@ export default function Reports() {
           <p className="text-3xl font-bold mt-2">{totalServices}</p>
         </div>
       </div>
+
       <div className="grid grid-cols-3 gap-6 mb-8">
         <div className="border rounded-lg p-6">
-          <h2 className="text-gray-500">Most Popular Service</h2>
+          <h2 className="text-gray-500">Highest Value Service</h2>
 
-          <p className="text-xl font-bold mt-2">{mostPopularService}</p>
+          <p className="text-xl font-bold mt-2">{topService?.name}</p>
         </div>
 
         <div className="border rounded-lg p-6">
           <h2 className="text-gray-500">Top Customer</h2>
 
           <p className="text-xl font-bold mt-2">{topCustomer?.name}</p>
-
-          <p className="text-gray-500">{topCustomer?.visits} visits</p>
         </div>
 
         <div className="border rounded-lg p-6">
@@ -126,6 +128,7 @@ export default function Reports() {
           <p className="text-xl font-bold mt-2">{bestStaff?.name}</p>
         </div>
       </div>
+
       <div className="border rounded-lg overflow-hidden">
         <div className="p-4 border-b bg-gray-50">
           <h2 className="text-xl font-bold">Recent Appointments</h2>

@@ -7,57 +7,73 @@ import AddServiceDialog from "../components/service/AddServiceDialog";
 
 export default function ServiceManagement() {
   const [search, setSearch] = useState("");
-
-  const [services, setServices] = useState(() => {
-    const savedServices = localStorage.getItem("services");
-
-    return savedServices
-      ? JSON.parse(savedServices)
-      : [
-          {
-            id: 1,
-            name: "Hair Cut",
-            price: 100000,
-            duration: "30 mins",
-          },
-          {
-            id: 2,
-            name: "Hair Coloring",
-            price: 500000,
-            duration: "120 mins",
-          },
-          {
-            id: 3,
-            name: "Hair Wash",
-            price: 50000,
-            duration: "15 mins",
-          },
-        ];
-  });
+  const [services, setServices] = useState([]);
 
   const [openEdit, setOpenEdit] = useState(false);
   const [openAdd, setOpenAdd] = useState(false);
 
   const [selectedService, setSelectedService] = useState(null);
 
+  const loadServices = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/services");
+      const data = await res.json();
+      setServices(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    localStorage.setItem("services", JSON.stringify(services));
-  }, [services]);
+    const fetchData = async () => {
+      await loadServices();
+    };
 
-  const handleDelete = (id) => {
-    setServices(services.filter((service) => service.id !== id));
+    fetchData();
+  }, []);
+
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`http://localhost:5000/api/services/${id}`, {
+        method: "DELETE",
+      });
+
+      loadServices();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleEdit = (updatedService) => {
-    setServices(
-      services.map((service) =>
-        service.id === updatedService.id ? updatedService : service,
-      ),
-    );
+  const handleEdit = async (updatedService) => {
+    try {
+      await fetch(`http://localhost:5000/api/services/${updatedService.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedService),
+      });
+
+      loadServices();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleAdd = (newService) => {
-    setServices([...services, newService]);
+  const handleAdd = async (newService) => {
+    try {
+      await fetch("http://localhost:5000/api/services", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newService),
+      });
+
+      loadServices();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const filteredServices = services.filter((service) =>
@@ -67,7 +83,7 @@ export default function ServiceManagement() {
   const averagePrice =
     services.length > 0
       ? Math.round(
-          services.reduce((sum, service) => sum + service.price, 0) /
+          services.reduce((sum, service) => sum + Number(service.price), 0) /
             services.length,
         )
       : 0;
@@ -75,7 +91,7 @@ export default function ServiceManagement() {
   const mostExpensiveService =
     services.length > 0
       ? services.reduce((prev, current) =>
-          prev.price > current.price ? prev : current,
+          Number(prev.price) > Number(current.price) ? prev : current,
         )
       : null;
 
@@ -123,9 +139,13 @@ export default function ServiceManagement() {
           <tr className="border-b bg-gray-50">
             <th className="p-3 text-left">Name</th>
 
+            <th className="p-3 text-left">Category</th>
+
             <th className="p-3 text-left">Price</th>
 
             <th className="p-3 text-left">Duration</th>
+
+            <th className="p-3 text-left">Status</th>
 
             <th className="p-3 text-left">Action</th>
           </tr>
@@ -139,15 +159,15 @@ export default function ServiceManagement() {
             >
               <td className="p-3 font-medium">{service.name}</td>
 
+              <td className="p-3">{service.category}</td>
+
               <td className="p-3 font-medium">
-                {service.price.toLocaleString()} VNĐ
+                {Number(service.price).toLocaleString()} VNĐ
               </td>
 
-              <td className="p-3">
-                <span className="bg-gray-100 px-3 py-1 rounded-full text-sm">
-                  {service.duration}
-                </span>
-              </td>
+              <td className="p-3">{service.duration} mins</td>
+
+              <td className="p-3">{service.status}</td>
 
               <td className="p-3 flex gap-2">
                 <Button
@@ -166,7 +186,7 @@ export default function ServiceManagement() {
 
           {filteredServices.length === 0 && (
             <tr>
-              <td colSpan={4} className="text-center p-4">
+              <td colSpan={6} className="text-center p-4">
                 No services found
               </td>
             </tr>

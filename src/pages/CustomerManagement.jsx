@@ -5,80 +5,85 @@ import { Input } from "../components/ui/input";
 import AddCustomerDialog from "../components/customer/AddCustomerDialog";
 import EditCustomerDialog from "../components/customer/EditCustomerDialog";
 
-const defaultCustomers = [
-  {
-    id: 1,
-    name: "Alice",
-    phone: "0901234567",
-    visits: 5,
-  },
-  {
-    id: 2,
-    name: "Tom",
-    phone: "0908888888",
-    visits: 2,
-  },
-  {
-    id: 3,
-    name: "Sophia",
-    phone: "0909999999",
-    visits: 8,
-  },
-];
-
 export default function CustomerManagement() {
   const [search, setSearch] = useState("");
-
-  const [customers, setCustomers] = useState(() => {
-    const saved = localStorage.getItem("customers");
-
-    return saved ? JSON.parse(saved) : defaultCustomers;
-  });
+  const [customers, setCustomers] = useState([]);
 
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
 
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
+  const loadCustomers = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/customers");
+      const data = await res.json();
+
+      setCustomers(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    localStorage.setItem("customers", JSON.stringify(customers));
-  }, [customers]);
+    const fetchData = async () => {
+      await loadCustomers();
+    };
 
-  const handleAdd = (newCustomer) => {
-    setCustomers([...customers, newCustomer]);
+    fetchData();
+  }, []);
+
+  const handleAdd = async (newCustomer) => {
+    try {
+      await fetch("http://localhost:5000/api/customers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newCustomer),
+      });
+
+      loadCustomers();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleDelete = (id) => {
-    setCustomers(customers.filter((customer) => customer.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await fetch(`http://localhost:5000/api/customers/${id}`, {
+        method: "DELETE",
+      });
+
+      loadCustomers();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleEdit = (updatedCustomer) => {
-    setCustomers(
-      customers.map((customer) =>
-        customer.id === updatedCustomer.id ? updatedCustomer : customer,
-      ),
-    );
+  const handleEdit = async (updatedCustomer) => {
+    try {
+      await fetch(`http://localhost:5000/api/customers/${updatedCustomer.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedCustomer),
+      });
+
+      loadCustomers();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const filteredCustomers = customers.filter(
     (customer) =>
-      customer.name.toLowerCase().includes(search.toLowerCase()) ||
-      customer.phone.includes(search),
+      customer.name?.toLowerCase().includes(search.toLowerCase()) ||
+      customer.phone?.includes(search),
   );
 
   const totalCustomers = customers.length;
-
-  const totalVisits = customers.reduce(
-    (sum, customer) => sum + customer.visits,
-    0,
-  );
-
-  const topCustomer =
-    customers.length > 0
-      ? customers.reduce((prev, current) =>
-          prev.visits > current.visits ? prev : current,
-        )
-      : null;
 
   return (
     <div className="p-8">
@@ -88,25 +93,22 @@ export default function CustomerManagement() {
         <Button onClick={() => setOpenAdd(true)}>Add Customer</Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="border rounded-lg p-5 hover:shadow-md transition">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="border rounded-lg p-5">
           <p className="text-gray-500">Total Customers</p>
 
           <p className="text-3xl font-bold mt-2">{totalCustomers}</p>
         </div>
 
-        <div className="border rounded-lg p-5 hover:shadow-md transition">
-          <p className="text-gray-500">Top Customer</p>
+        <div className="border rounded-lg p-5">
+          <p className="text-gray-500">Active Customers</p>
 
-          <p className="text-2xl font-bold mt-2">{topCustomer?.name}</p>
-
-          <p className="text-gray-500">{topCustomer?.visits} visits</p>
-        </div>
-
-        <div className="border rounded-lg p-5 hover:shadow-md transition">
-          <p className="text-gray-500">Total Visits</p>
-
-          <p className="text-3xl font-bold mt-2">{totalVisits}</p>
+          <p className="text-3xl font-bold mt-2">
+            {
+              customers.filter((customer) => customer.status === "Active")
+                .length
+            }
+          </p>
         </div>
       </div>
 
@@ -123,11 +125,10 @@ export default function CustomerManagement() {
         <thead>
           <tr className="border-b bg-gray-50">
             <th className="p-3 text-left">Name</th>
-
             <th className="p-3 text-left">Phone</th>
-
-            <th className="p-3 text-left">Visits</th>
-
+            <th className="p-3 text-left">Email</th>
+            <th className="p-3 text-left">Gender</th>
+            <th className="p-3 text-left">Status</th>
             <th className="p-3 text-left">Action</th>
           </tr>
         </thead>
@@ -142,11 +143,11 @@ export default function CustomerManagement() {
 
               <td className="p-3">{customer.phone}</td>
 
-              <td className="p-3">
-                <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-                  {customer.visits} visits
-                </span>
-              </td>
+              <td className="p-3">{customer.email}</td>
+
+              <td className="p-3">{customer.gender}</td>
+
+              <td className="p-3">{customer.status}</td>
 
               <td className="p-3 flex gap-2">
                 <Button
@@ -170,7 +171,7 @@ export default function CustomerManagement() {
 
           {filteredCustomers.length === 0 && (
             <tr>
-              <td colSpan={4} className="text-center p-4">
+              <td colSpan={6} className="text-center p-4">
                 No customers found
               </td>
             </tr>

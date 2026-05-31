@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 
-import staffsData from "../data/staffs";
-
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 
@@ -10,74 +8,96 @@ import EditStaffDialog from "../components/staff/EditStaffDialog";
 
 export default function StaffList() {
   const [search, setSearch] = useState("");
-
-  const [staffs, setStaffs] = useState(() => {
-    const savedStaffs = localStorage.getItem("staffs");
-    return savedStaffs ? JSON.parse(savedStaffs) : staffsData;
-  });
-
-  const appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+  const [staffs, setStaffs] = useState([]);
 
   const [openAdd, setOpenAdd] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
 
   const [selectedStaff, setSelectedStaff] = useState(null);
 
-  useEffect(() => {
-    localStorage.setItem("staffs", JSON.stringify(staffs));
-  }, [staffs]);
+  const loadStaffs = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/staffs");
+      const data = await res.json();
 
-  const handleAdd = (newStaff) => {
-    setStaffs([...staffs, newStaff]);
-  };
-
-  const handleDelete = (id) => {
-    if (window.confirm("Delete this staff?")) {
-      setStaffs(staffs.filter((staff) => staff.id !== id));
+      setStaffs(
+        data.map((staff) => ({
+          id: staff.id,
+          name: staff.name,
+          email: staff.email,
+          phone: staff.phone,
+          role: staff.position,
+          status: staff.status,
+        })),
+      );
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  const handleEdit = (updatedStaff) => {
-    setStaffs(
-      staffs.map((staff) =>
-        staff.id === updatedStaff.id ? updatedStaff : staff,
-      ),
-    );
+  useEffect(() => {
+    const fetchData = async () => {
+      await loadStaffs();
+    };
+
+    fetchData();
+  }, []);
+
+  const handleAdd = async (newStaff) => {
+    try {
+      await fetch("http://localhost:5000/api/staffs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: newStaff.name,
+          position: "Stylist",
+          phone: newStaff.phone,
+          email: newStaff.email,
+        }),
+      });
+
+      loadStaffs();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleCreateAppointment = (staff) => {
-    const customer = prompt("Customer name:");
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this staff?")) return;
 
-    if (!customer) return;
+    try {
+      await fetch(`http://localhost:5000/api/staffs/${id}`, {
+        method: "DELETE",
+      });
 
-    const service = prompt("Service name:");
+      loadStaffs();
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-    if (!service) return;
+  const handleEdit = async (updatedStaff) => {
+    try {
+      await fetch(`http://localhost:5000/api/staffs/${updatedStaff.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: updatedStaff.name,
+          position: updatedStaff.role,
+          phone: updatedStaff.phone,
+          email: updatedStaff.email,
+          status: updatedStaff.status,
+        }),
+      });
 
-    const date = prompt("Date (YYYY-MM-DD):");
-
-    if (!date) return;
-
-    const time = prompt("Time (HH:mm):");
-
-    if (!time) return;
-
-    const appointments = JSON.parse(localStorage.getItem("appointments")) || [];
-
-    appointments.push({
-      id: Date.now(),
-      customer,
-      service,
-      date,
-      time,
-      staff: staff.name,
-    });
-
-    localStorage.setItem("appointments", JSON.stringify(appointments));
-
-    alert(`Appointment created for ${staff.name}`);
-
-    window.location.reload();
+      loadStaffs();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const filteredStaffs = staffs.filter(
@@ -113,15 +133,12 @@ export default function StaffList() {
             <th className="p-3 text-left">Status</th>
             <th className="p-3 text-left">Appointments</th>
             <th className="p-3 text-left">Action</th>
-            <th className="p-3 text-left">Create Appointment</th>
           </tr>
         </thead>
 
         <tbody>
           {filteredStaffs.map((staff) => {
-            const appointmentCount = appointments.filter(
-              (a) => a.staff === staff.name,
-            ).length;
+            const appointmentCount = 0;
 
             return (
               <tr
@@ -166,19 +183,13 @@ export default function StaffList() {
                     </Button>
                   </div>
                 </td>
-
-                <td className="p-3">
-                  <Button onClick={() => handleCreateAppointment(staff)}>
-                    Create
-                  </Button>
-                </td>
               </tr>
             );
           })}
 
           {filteredStaffs.length === 0 && (
             <tr>
-              <td colSpan={8} className="text-center p-4">
+              <td colSpan={7} className="text-center p-4">
                 No staff found
               </td>
             </tr>

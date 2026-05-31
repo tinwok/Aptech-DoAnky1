@@ -1,7 +1,4 @@
-import staffsData from "../data/staffs";
-import appointmentsData from "../data/appointments";
-import customersData from "../data/customers";
-import servicesData from "../data/services";
+import { useState, useEffect } from "react";
 
 import {
   Users,
@@ -11,21 +8,55 @@ import {
   DollarSign,
 } from "lucide-react";
 
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from "recharts";
+
 export default function Dashboard() {
-  const staffs = JSON.parse(localStorage.getItem("staffs")) || staffsData;
+  const [staffs, setStaffs] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [services, setServices] = useState([]);
+  const [appointments, setAppointments] = useState([]);
 
-  const appointments =
-    JSON.parse(localStorage.getItem("appointments")) || appointmentsData;
+  const loadData = async () => {
+    try {
+      const [staffRes, customerRes, serviceRes, appointmentRes] =
+        await Promise.all([
+          fetch("http://localhost:5000/api/staffs"),
+          fetch("http://localhost:5000/api/customers"),
+          fetch("http://localhost:5000/api/services"),
+          fetch("http://localhost:5000/api/appointments"),
+        ]);
 
-  const customers =
-    JSON.parse(localStorage.getItem("customers")) || customersData;
+      const staffsData = await staffRes.json();
+      const customersData = await customerRes.json();
+      const servicesData = await serviceRes.json();
+      const appointmentsData = await appointmentRes.json();
 
-  const services = JSON.parse(localStorage.getItem("services")) || servicesData;
+      setStaffs(staffsData);
+      setCustomers(customersData);
+      setServices(servicesData);
+      setAppointments(appointmentsData);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await loadData();
+    };
+
+    fetchData();
+  }, []);
 
   const totalStaff = staffs.length;
-
   const totalCustomers = customers.length;
-
   const totalAppointments = appointments.length;
 
   const activeStaff = staffs.filter(
@@ -39,7 +70,7 @@ export default function Dashboard() {
   const totalRevenue = appointments.reduce((sum, appointment) => {
     const service = services.find((s) => s.name === appointment.service);
 
-    return sum + (service?.price || 0);
+    return sum + Number(service?.price || 0);
   }, 0);
 
   const cards = [
@@ -77,17 +108,44 @@ export default function Dashboard() {
 
   const bestStaff =
     staffs.length > 0
-      ? staffs.reduce((best, current) =>
-          current.assignedCustomers > best.assignedCustomers ? current : best,
-        )
+      ? staffs.reduce((best, current) => {
+          const bestCount = appointments.filter(
+            (a) => a.staff === best.name,
+          ).length;
+
+          const currentCount = appointments.filter(
+            (a) => a.staff === current.name,
+          ).length;
+
+          return currentCount > bestCount ? current : best;
+        })
       : null;
 
   const topService =
     services.length > 0
       ? services.reduce((best, current) =>
-          current.price > best.price ? current : best,
+          Number(current.price) > Number(best.price) ? current : best,
         )
       : null;
+
+  const chartData = [
+    {
+      name: "Staff",
+      value: totalStaff,
+    },
+    {
+      name: "Customers",
+      value: totalCustomers,
+    },
+    {
+      name: "Appointments",
+      value: totalAppointments,
+    },
+    {
+      name: "Services",
+      value: services.length,
+    },
+  ];
 
   return (
     <div className="p-8">
@@ -97,16 +155,20 @@ export default function Dashboard() {
         {cards.map((card) => (
           <div
             key={card.title}
-            className="bg-white border rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300"
+            className="bg-white border rounded-xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
           >
-            <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-500">{card.title}</p>
+                <p className="text-sm text-gray-500">{card.title}</p>
 
-                <h2 className="text-3xl font-bold mt-3">{card.value}</h2>
+                <h2 className="text-4xl font-bold mt-2 text-black">
+                  {card.value}
+                </h2>
               </div>
 
-              <div className="text-gray-700">{card.icon}</div>
+              <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-black">
+                {card.icon}
+              </div>
             </div>
           </div>
         ))}
@@ -117,10 +179,6 @@ export default function Dashboard() {
           <h2 className="text-gray-500 mb-2">Best Staff</h2>
 
           <p className="text-2xl font-bold">{bestStaff?.name}</p>
-
-          <p className="text-gray-500">
-            {bestStaff?.assignedCustomers} assigned customers
-          </p>
         </div>
 
         <div className="bg-white border rounded-xl p-6 shadow-sm">
@@ -129,8 +187,23 @@ export default function Dashboard() {
           <p className="text-2xl font-bold">{topService?.name}</p>
 
           <p className="text-gray-500">
-            {topService?.price?.toLocaleString()} VNĐ
+            {Number(topService?.price || 0).toLocaleString()} VNĐ
           </p>
+        </div>
+      </div>
+
+      <div className="mt-8 bg-white border rounded-xl p-6 shadow-sm">
+        <h2 className="text-xl font-semibold mb-4">System Statistics</h2>
+
+        <div style={{ width: "100%", height: 300 }}>
+          <ResponsiveContainer>
+            <BarChart data={chartData}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Bar dataKey="value" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
