@@ -47,11 +47,11 @@ export default function Reports() {
     (staff) => staff.status === "Active",
   ).length;
 
-  const totalRevenue = services.reduce(
-    (sum, service) => sum + Number(service.price || 0),
-    0,
-  );
+  const totalRevenue = appointments.reduce((sum, appointment) => {
+    const service = services.find((s) => s.name === appointment.service);
 
+    return sum + Number(service?.price || 0);
+  }, 0);
   const bestStaff = staffs.length > 0 ? staffs[0] : null;
 
   const topCustomer = customers.length > 0 ? customers[0] : null;
@@ -154,9 +154,13 @@ export default function Reports() {
 
                 <td className="p-3">{appointment.service}</td>
 
-                <td className="p-3">{appointment.staff}</td>
+                <td className="p-3">{appointment.staff || "Unassigned"}</td>
 
-                <td className="p-3">{appointment.date}</td>
+                <td className="p-3">
+                  {appointment.date
+                    ? new Date(appointment.date).toLocaleDateString("vi-VN")
+                    : "-"}
+                </td>
               </tr>
             ))}
           </tbody>

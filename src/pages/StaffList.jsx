@@ -58,7 +58,7 @@ export default function StaffList() {
         }),
       });
 
-      loadStaffs();
+      await loadStaffs();
     } catch (err) {
       console.error(err);
     }
@@ -72,7 +72,7 @@ export default function StaffList() {
         method: "DELETE",
       });
 
-      loadStaffs();
+      await loadStaffs();
     } catch (err) {
       console.error(err);
     }
@@ -94,7 +94,7 @@ export default function StaffList() {
         }),
       });
 
-      loadStaffs();
+      await loadStaffs();
     } catch (err) {
       console.error(err);
     }
@@ -109,12 +109,12 @@ export default function StaffList() {
 
   return (
     <div className="p-8">
+      {" "}
       <div className="flex justify-between items-center mb-6">
+        {" "}
         <h1 className="text-3xl font-bold">Staff Management</h1>
-
         <Button onClick={() => setOpenAdd(true)}>Add Staff</Button>
       </div>
-
       <div className="mb-4">
         <Input
           placeholder="Search by name, email or role..."
@@ -122,7 +122,6 @@ export default function StaffList() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-
       <table className="w-full border">
         <thead>
           <tr className="border-b bg-gray-50">
@@ -196,9 +195,7 @@ export default function StaffList() {
           )}
         </tbody>
       </table>
-
       <AddStaffDialog open={openAdd} setOpen={setOpenAdd} onAdd={handleAdd} />
-
       <EditStaffDialog
         open={openEdit}
         setOpen={setOpenEdit}

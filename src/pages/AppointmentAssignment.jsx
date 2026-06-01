@@ -19,7 +19,9 @@ export default function AppointmentAssignment() {
   const loadAppointments = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/appointments");
+
       const data = await res.json();
+
       setAppointments(data);
     } catch (error) {
       console.error(error);
@@ -29,7 +31,9 @@ export default function AppointmentAssignment() {
   const loadStaffs = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/staffs");
+
       const data = await res.json();
+
       setStaffs(data);
     } catch (error) {
       console.error(error);
@@ -55,7 +59,7 @@ export default function AppointmentAssignment() {
         method: "DELETE",
       });
 
-      loadAppointments();
+      await loadAppointments();
     } catch (error) {
       console.error(error);
     }
@@ -83,6 +87,7 @@ export default function AppointmentAssignment() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div className="border rounded-lg p-4">
           <p className="text-gray-500">Total Appointments</p>
+
           <p className="text-3xl font-bold">{appointments.length}</p>
         </div>
 
@@ -117,11 +122,17 @@ export default function AppointmentAssignment() {
         <thead>
           <tr className="border-b bg-gray-50">
             <th className="p-3 text-left">Customer</th>
+
             <th className="p-3 text-left">Staff</th>
+
             <th className="p-3 text-left">Service</th>
+
             <th className="p-3 text-left">Date</th>
+
             <th className="p-3 text-left">Time</th>
+
             <th className="p-3 text-left">Status</th>
+
             <th className="p-3 text-left">Action</th>
           </tr>
         </thead>
@@ -201,7 +212,7 @@ export default function AppointmentAssignment() {
               },
             );
 
-            loadAppointments();
+            await loadAppointments();
           } catch (error) {
             console.error(error);
           }
