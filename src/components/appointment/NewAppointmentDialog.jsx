@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 export default function NewAppointmentDialog({ open, setOpen, onAdd }) {
   const [customers, setCustomers] = useState([]);
   const [services, setServices] = useState([]);
+  const [availableSlots, setAvailableSlots] = useState([]);
 
   const [customerId, setCustomerId] = useState("");
   const [serviceId, setServiceId] = useState("");
@@ -20,7 +21,6 @@ export default function NewAppointmentDialog({ open, setOpen, onAdd }) {
         ]);
 
         const customerData = await customerRes.json();
-
         const serviceData = await serviceRes.json();
 
         setCustomers(customerData);
@@ -42,7 +42,7 @@ export default function NewAppointmentDialog({ open, setOpen, onAdd }) {
     }
 
     try {
-      await fetch("http://127.0.0.1:8000/api/appointments", {
+      const res = await fetch("http://127.0.0.1:8000/api/appointments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -55,6 +55,13 @@ export default function NewAppointmentDialog({ open, setOpen, onAdd }) {
           status: "Pending",
         }),
       });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        alert(data.message);
+        return;
+      }
 
       onAdd();
 
@@ -94,16 +101,54 @@ export default function NewAppointmentDialog({ open, setOpen, onAdd }) {
           <select
             className="w-full border p-2 rounded"
             value={serviceId}
-            onChange={(e) => setServiceId(e.target.value)}
+            onChange={async (e) => {
+              setServiceId(e.target.value);
+
+              try {
+                const res = await fetch(
+                  `http://127.0.0.1:8000/api/appointments/available-slots/${e.target.value}`,
+                );
+
+                const data = await res.json();
+
+                setAvailableSlots(data.slots);
+              } catch (error) {
+                console.error(error);
+              }
+            }}
           >
             <option value="">Select Service</option>
 
             {services.map((service) => (
               <option key={service.id} value={service.id}>
-                {service.name}
+                {service.name} ({service.duration} mins)
               </option>
             ))}
           </select>
+
+          {serviceId && (
+            <p className="text-sm text-gray-500">
+              Duration:{" "}
+              {services.find((s) => s.id === Number(serviceId))?.duration} mins
+            </p>
+          )}
+
+          {availableSlots.length > 0 && (
+            <div>
+              <p className="text-sm font-medium">Available Slots</p>
+
+              <div className="flex flex-wrap gap-2 mt-2">
+                {availableSlots.map((slot) => (
+                  <span
+                    key={slot}
+                    className="px-2 py-1 bg-green-100 text-green-700 rounded text-sm"
+                  >
+                    {slot}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
 
           <input
             type="date"

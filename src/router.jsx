@@ -9,6 +9,7 @@ import CustomerManagement from "./pages/CustomerManagement";
 import ServiceManagement from "./pages/ServiceManagement";
 import AppointmentAssignment, {
   loader as appointmentLoader,
+  action as appointmentAction,
 } from "./pages/AppointmentAssignment";
 import Reports from "./pages/Reports";
 
@@ -48,8 +49,8 @@ const router = createBrowserRouter([
         path: "appointments",
         element: <AppointmentAssignment />,
         loader: appointmentLoader,
+        action: appointmentAction,
       },
-
       {
         path: "reports",
         element: <Reports />,

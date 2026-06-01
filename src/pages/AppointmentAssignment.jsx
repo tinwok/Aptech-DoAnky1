@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import AssignDialog from "../components/appointment/AssignDialog";
 import NewAppointmentDialog from "../components/appointment/NewAppointmentDialog";
@@ -6,7 +6,8 @@ import NewAppointmentDialog from "../components/appointment/NewAppointmentDialog
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 
-import { useLoaderData, useFetcher } from "react-router-dom";
+import { useLoaderData } from "react-router-dom";
+
 export async function loader() {
   const [appointmentsRes, staffsRes] = await Promise.all([
     fetch("http://127.0.0.1:8000/api/appointments"),
@@ -18,17 +19,48 @@ export async function loader() {
     staffs: await staffsRes.json(),
   };
 }
+
+export async function action({ request }) {
+  const formData = await request.formData();
+
+  const intent = formData.get("intent");
+
+  if (intent === "delete") {
+    const id = formData.get("id");
+
+    await fetch(`http://127.0.0.1:8000/api/appointments/${id}`, {
+      method: "DELETE",
+    });
+  }
+
+  return null;
+}
+
 export default function AppointmentAssignment() {
   const [open, setOpen] = useState(false);
   const [openNew, setOpenNew] = useState(false);
 
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [search, setSearch] = useState("");
-
+  const [availableSlots, setAvailableSlots] = useState([]);
   const data = useLoaderData();
 
   const [appointments, setAppointments] = useState(data.appointments);
   const [staffs] = useState(data.staffs);
+
+  const loadAvailableSlots = async () => {
+    try {
+      const res = await fetch(
+        "http://127.0.0.1:8000/api/appointments/available-slots",
+      );
+
+      const data = await res.json();
+
+      setAvailableSlots(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const loadAppointments = async () => {
     try {
@@ -64,7 +96,14 @@ export default function AppointmentAssignment() {
       appointment.staff?.toLowerCase().includes(search.toLowerCase()) ||
       appointment.service?.toLowerCase().includes(search.toLowerCase()),
   );
+  useEffect(() => {
+    const loadData = async () => {
+      await loadAvailableSlots();
+      await loadAppointments();
+    };
 
+    loadData();
+  }, []);
   const activeStaffCount = staffs.filter(
     (staff) => staff.status === "Active",
   ).length;
@@ -110,7 +149,20 @@ export default function AppointmentAssignment() {
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
+      <div className="mb-6 border rounded-lg p-4">
+        <h2 className="font-semibold mb-2">Available Time Slots</h2>
 
+        <div className="flex flex-wrap gap-2">
+          {availableSlots.map((slot) => (
+            <span
+              key={slot}
+              className="px-3 py-1 bg-green-100 text-green-700 rounded"
+            >
+              {slot}
+            </span>
+          ))}
+        </div>
+      </div>
       <table className="w-full border">
         <thead>
           <tr className="border-b bg-gray-50">
@@ -156,7 +208,11 @@ export default function AppointmentAssignment() {
                       ? "bg-green-100 text-green-700"
                       : appointment.status === "Pending"
                         ? "bg-yellow-100 text-yellow-700"
-                        : "bg-gray-100 text-gray-700"
+                        : appointment.status === "Completed"
+                          ? "bg-blue-100 text-blue-700"
+                          : appointment.status === "Cancelled"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-gray-100 text-gray-700"
                   }`}
                 >
                   {appointment.status}
@@ -178,6 +234,75 @@ export default function AppointmentAssignment() {
                   }}
                 >
                   Assign
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={async () => {
+                    const newDate = prompt(
+                      "Nhập ngày giờ mới",
+                      `${appointment.date} ${appointment.time}`,
+                    );
+
+                    if (!newDate) return;
+
+                    try {
+                      await fetch(
+                        `http://127.0.0.1:8000/api/appointments/${appointment.id}`,
+                        {
+                          method: "PUT",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            staff_id: 1,
+                            appointment_date: newDate,
+                            status: appointment.status,
+                          }),
+                        },
+                      );
+
+                      await loadAppointments();
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  }}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={async () => {
+                    const newStatus = prompt(
+                      "Status (Pending / Confirmed / Completed / Cancelled)",
+                      appointment.status,
+                    );
+
+                    if (!newStatus) return;
+
+                    try {
+                      await fetch(
+                        `http://127.0.0.1:8000/api/appointments/${appointment.id}`,
+                        {
+                          method: "PUT",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            staff_id: 1,
+                            appointment_date: `${appointment.date} ${appointment.time}`,
+                            status: newStatus,
+                          }),
+                        },
+                      );
+
+                      await loadAppointments();
+                    } catch (error) {
+                      console.error(error);
+                    }
+                  }}
+                >
+                  Status
                 </Button>
               </td>
             </tr>
