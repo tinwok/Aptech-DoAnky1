@@ -6,7 +6,7 @@ import NewAppointmentDialog from "../components/appointment/NewAppointmentDialog
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useFetcher } from "react-router-dom";
 export async function loader() {
   const [appointmentsRes, staffsRes] = await Promise.all([
     fetch("http://127.0.0.1:8000/api/appointments"),
