@@ -16,7 +16,7 @@ export default function ServiceManagement() {
 
   const loadServices = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/services");
+      const res = await fetch("http://127.0.0.1:8000/api/services");
       const data = await res.json();
       setServices(data);
     } catch (error) {
@@ -34,7 +34,7 @@ export default function ServiceManagement() {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/services/${id}`, {
+      await fetch(`http://127.0.0.1:8000/api/services/${id}`, {
         method: "DELETE",
       });
 
@@ -46,7 +46,7 @@ export default function ServiceManagement() {
 
   const handleEdit = async (updatedService) => {
     try {
-      await fetch(`http://localhost:5000/api/services/${updatedService.id}`, {
+      await fetch(`http://127.0.0.1:8000/api/services/${updatedService.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -62,7 +62,7 @@ export default function ServiceManagement() {
 
   const handleAdd = async (newService) => {
     try {
-      await fetch("http://localhost:5000/api/services", {
+      await fetch("http://127.0.0.1:8000/api/services", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

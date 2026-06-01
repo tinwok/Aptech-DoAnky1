@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import AssignDialog from "../components/appointment/AssignDialog";
 import NewAppointmentDialog from "../components/appointment/NewAppointmentDialog";
@@ -6,6 +6,18 @@ import NewAppointmentDialog from "../components/appointment/NewAppointmentDialog
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 
+import { useLoaderData } from "react-router-dom";
+export async function loader() {
+  const [appointmentsRes, staffsRes] = await Promise.all([
+    fetch("http://127.0.0.1:8000/api/appointments"),
+    fetch("http://127.0.0.1:8000/api/staffs"),
+  ]);
+
+  return {
+    appointments: await appointmentsRes.json(),
+    staffs: await staffsRes.json(),
+  };
+}
 export default function AppointmentAssignment() {
   const [open, setOpen] = useState(false);
   const [openNew, setOpenNew] = useState(false);
@@ -13,12 +25,14 @@ export default function AppointmentAssignment() {
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [search, setSearch] = useState("");
 
-  const [appointments, setAppointments] = useState([]);
-  const [staffs, setStaffs] = useState([]);
+  const data = useLoaderData();
+
+  const [appointments, setAppointments] = useState(data.appointments);
+  const [staffs] = useState(data.staffs);
 
   const loadAppointments = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/appointments");
+      const res = await fetch("http://127.0.0.1:8000/api/appointments");
 
       const data = await res.json();
 
@@ -28,34 +42,13 @@ export default function AppointmentAssignment() {
     }
   };
 
-  const loadStaffs = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/api/staffs");
-
-      const data = await res.json();
-
-      setStaffs(data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      await loadAppointments();
-      await loadStaffs();
-    };
-
-    fetchData();
-  }, []);
-
   const handleDeleteAppointment = async (id) => {
     const confirmDelete = window.confirm("Delete this appointment?");
 
     if (!confirmDelete) return;
 
     try {
-      await fetch(`http://localhost:5000/api/appointments/${id}`, {
+      await fetch(`http://127.0.0.1:8000/api/appointments/${id}`, {
         method: "DELETE",
       });
 
@@ -200,7 +193,7 @@ export default function AppointmentAssignment() {
         onAssign={async (staffId) => {
           try {
             await fetch(
-              `http://localhost:5000/api/appointments/${selectedAppointment.id}`,
+              `http://127.0.0.1:8000/api/appointments/${selectedAppointment.id}`,
               {
                 method: "PUT",
                 headers: {

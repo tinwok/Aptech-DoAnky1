@@ -16,7 +16,7 @@ export default function CustomerManagement() {
 
   const loadCustomers = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/customers");
+      const res = await fetch("http://127.0.0.1:8000/api/customers");
       const data = await res.json();
 
       setCustomers(data);
@@ -35,7 +35,7 @@ export default function CustomerManagement() {
 
   const handleAdd = async (newCustomer) => {
     try {
-      await fetch("http://localhost:5000/api/customers", {
+      await fetch("http://127.0.0.1:8000/api/customers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -51,7 +51,7 @@ export default function CustomerManagement() {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`http://localhost:5000/api/customers/${id}`, {
+      await fetch(`http://127.0.0.1:8000/api/customers/${id}`, {
         method: "DELETE",
       });
 
@@ -63,7 +63,7 @@ export default function CustomerManagement() {
 
   const handleEdit = async (updatedCustomer) => {
     try {
-      await fetch(`http://localhost:5000/api/customers/${updatedCustomer.id}`, {
+      await fetch(`http://127.0.0.1:8000/api/customers/${updatedCustomer.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -27,10 +27,10 @@ export default function Dashboard() {
     try {
       const [staffRes, customerRes, serviceRes, appointmentRes] =
         await Promise.all([
-          fetch("http://localhost:5000/api/staffs"),
-          fetch("http://localhost:5000/api/customers"),
-          fetch("http://localhost:5000/api/services"),
-          fetch("http://localhost:5000/api/appointments"),
+          fetch("http://127.0.0.1:8000/api/staffs"),
+          fetch("http://127.0.0.1:8000/api/customers"),
+          fetch("http://127.0.0.1:8000/api/services"),
+          fetch("http://127.0.0.1:8000/api/appointments"),
         ]);
 
       const staffsData = await staffRes.json();
@@ -195,8 +195,10 @@ export default function Dashboard() {
       <div className="mt-8 bg-white border rounded-xl p-6 shadow-sm">
         <h2 className="text-xl font-semibold mb-4">System Statistics</h2>
 
-        <div style={{ width: "100%", height: 300 }}>
-          <ResponsiveContainer>
+        <div className="mt-8 bg-white border rounded-xl p-6 shadow-sm">
+          <h2 className="text-xl font-semibold mb-4">System Statistics</h2>
+
+          <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chartData}>
               <XAxis dataKey="name" />
               <YAxis />

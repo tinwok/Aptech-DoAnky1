@@ -15,8 +15,8 @@ export default function NewAppointmentDialog({ open, setOpen, onAdd }) {
     const loadData = async () => {
       try {
         const [customerRes, serviceRes] = await Promise.all([
-          fetch("http://localhost:5000/api/customers"),
-          fetch("http://localhost:5000/api/services"),
+          fetch("http://127.0.0.1:8000/api/customers"),
+          fetch("http://127.0.0.1:8000/api/services"),
         ]);
 
         const customerData = await customerRes.json();
@@ -42,7 +42,7 @@ export default function NewAppointmentDialog({ open, setOpen, onAdd }) {
     }
 
     try {
-      await fetch("http://localhost:5000/api/appointments", {
+      await fetch("http://127.0.0.1:8000/api/appointments", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

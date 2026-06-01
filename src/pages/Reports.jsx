@@ -10,10 +10,10 @@ export default function Reports() {
     try {
       const [staffRes, customerRes, serviceRes, appointmentRes] =
         await Promise.all([
-          fetch("http://localhost:5000/api/staffs"),
-          fetch("http://localhost:5000/api/customers"),
-          fetch("http://localhost:5000/api/services"),
-          fetch("http://localhost:5000/api/appointments"),
+          fetch("http://127.0.0.1:8000/api/staffs"),
+          fetch("http://127.0.0.1:8000/api/customers"),
+          fetch("http://127.0.0.1:8000/api/services"),
+          fetch("http://127.0.0.1:8000/api/appointments"),
         ]);
 
       const staffsData = await staffRes.json();

@@ -17,7 +17,7 @@ export default function StaffList() {
 
   const loadStaffs = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/staffs");
+      const res = await fetch("http://127.0.0.1:8000/api/staffs");
       const data = await res.json();
 
       setStaffs(
@@ -45,7 +45,7 @@ export default function StaffList() {
 
   const handleAdd = async (newStaff) => {
     try {
-      await fetch("http://localhost:5000/api/staffs", {
+      await fetch("http://127.0.0.1:8000/api/staffs", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -68,7 +68,7 @@ export default function StaffList() {
     if (!window.confirm("Delete this staff?")) return;
 
     try {
-      await fetch(`http://localhost:5000/api/staffs/${id}`, {
+      await fetch(`http://127.0.0.1:8000/api/staffs/${id}`, {
         method: "DELETE",
       });
 
@@ -80,7 +80,7 @@ export default function StaffList() {
 
   const handleEdit = async (updatedStaff) => {
     try {
-      await fetch(`http://localhost:5000/api/staffs/${updatedStaff.id}`, {
+      await fetch(`http://127.0.0.1:8000/api/staffs/${updatedStaff.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
