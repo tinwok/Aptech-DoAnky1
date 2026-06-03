@@ -2,12 +2,15 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomersController;
+use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\StaffsController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 
-
+// Route::get('services', [ServicesController::class, 'index']);
+// Route::get('services/{service}', [ServicesController::class, 'show']);
+Route::apiResource('services', ServicesController::class);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
@@ -30,4 +33,5 @@ Route::middleware(['auth', 'role:admin'])->prefix('dashboard/admin')->group(func
         ->except(['index', 'show']);
     Route::apiResource('users', UserController::class);
     Route::patch('users/{id}/restore', [UserController::class, 'restore']);
+    Route::apiResource('services', ServicesController::class);
 });
