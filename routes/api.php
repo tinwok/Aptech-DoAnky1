@@ -8,9 +8,9 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 
-// Route::get('services', [ServicesController::class, 'index']);
-// Route::get('services/{service}', [ServicesController::class, 'show']);
-Route::apiResource('services', ServicesController::class);
+Route::get('services', [ServicesController::class, 'index']);
+Route::get('services/{service}', [ServicesController::class, 'show']);
+// Route::apiResource('services', ServicesController::class);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
