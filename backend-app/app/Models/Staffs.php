@@ -16,4 +16,8 @@ class Staffs extends Model
     {
         return $this->hasMany(Customers::class, 'preferred_staff_id');
     }
+    public function invoice()
+    {
+        return $this->hasMany(Invoices::class, 'staff_id');
+    }
 }

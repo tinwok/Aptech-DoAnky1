@@ -30,7 +30,6 @@ class StaffsController extends Controller
                 $q->where('name', 'like', "%{$search}%")->orWhere('email', 'like', "%{$search}%");
             });
         }
-
         if ($request->filled('min_salary')) {
             $query->where(
                 'salary',
@@ -38,7 +37,6 @@ class StaffsController extends Controller
                 $request->min_salary
             );
         }
-
         if ($request->filled('max_salary')) {
             $query->where(
                 'salary',

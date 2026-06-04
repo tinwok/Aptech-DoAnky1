@@ -34,8 +34,8 @@ class UpdateCustomerRequest extends FormRequest
 
             // customers
             'preferred_staff_id' => 'nullable|integer|exists:staffs,id',
-            'preferences' => 'nullable|string',
-            'allergies' => 'nullable|string'
+            'preferences' => 'nullable|string|max:500',
+            'allergies' => 'nullable|string|max:500'
         ];
     }
 }

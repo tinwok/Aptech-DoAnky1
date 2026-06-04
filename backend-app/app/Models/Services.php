@@ -15,8 +15,8 @@ class Services extends Model
         'note',
         'image_url'
     ];
-    public function invoices()
+    public function invoice_details()
     {
-        return $this->belongsToMany(Invoices::class, 'invoice_details', 'invoice_id', 'service_id');
+        return $this->hasMany(Invoice_details::class, 'service_id');
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Invoices extends Model
 {
-    protected $fillable = ['service_ids', 'customer_id', 'staff_id', 'payments_id', 'appointment_date', 'start_time', 'end_time', 'note'];
+    protected $fillable = ['customer_id', 'staff_id', 'payments_id', 'appointment_date', 'start_time', 'end_time', 'note'];
 
     public function customer()
     {
@@ -16,9 +16,5 @@ class Invoices extends Model
     public function staff()
     {
         return $this->belongsTo(Staffs::class, 'staff_id');
-    }
-    public function invoiceDetail()
-    {
-        return $this->hasMany(Invoice_details::class, 'invoice_id');
     }
 }
