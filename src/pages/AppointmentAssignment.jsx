@@ -240,8 +240,10 @@ export default function AppointmentAssignment() {
                   variant="outline"
                   onClick={async () => {
                     const newDate = prompt(
-                      "Nhập ngày giờ mới",
-                      `${appointment.date} ${appointment.time}`,
+                      "Nhập ngày giờ mới (YYYY-MM-DD HH:mm:ss)",
+                      appointment.date && appointment.time
+                        ? `${appointment.date} ${appointment.time}`
+                        : "",
                     );
 
                     if (!newDate) return;
@@ -255,9 +257,9 @@ export default function AppointmentAssignment() {
                             "Content-Type": "application/json",
                           },
                           body: JSON.stringify({
-                            staff_id: 1,
+                            staff_id: appointment.staff_id || 1,
                             appointment_date: newDate,
-                            status: appointment.status,
+                            status: appointment.status || "Pending",
                           }),
                         },
                       );
@@ -326,6 +328,8 @@ export default function AppointmentAssignment() {
                 },
                 body: JSON.stringify({
                   staff_id: Number(staffId),
+                  appointment_date: `${selectedAppointment.date} ${selectedAppointment.time}`,
+                  status: selectedAppointment.status,
                 }),
               },
             );
