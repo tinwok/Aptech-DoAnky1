@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\Appointment;
+use App\Models\Service;
 class AppointmentController extends Controller
 {
     public function index()
@@ -26,11 +27,15 @@ class AppointmentController extends Controller
 
         return response()->json($appointments);
     }
-    public function store(Request $request)
+ public function store(Request $request)
 {
-    $service = DB::table('services')
-        ->where('id', $request->service_id)
-        ->first();
+    $service = Service::find($request->service_id);
+
+    if (!$service) {
+        return response()->json([
+            'message' => 'Service not found'
+        ], 404);
+    }
 
     $newStart = strtotime($request->appointment_date);
     $newEnd = $newStart + ($service->duration * 60);
@@ -56,15 +61,13 @@ class AppointmentController extends Controller
             $newStart < $existingEnd &&
             $newEnd > $existingStart
         ) {
-
             return response()->json([
-                'message' =>
-                    'This staff already has an appointment during this time'
+                'message' => 'This staff already has an appointment during this time'
             ], 400);
         }
     }
 
-    $id = DB::table('appointments')->insertGetId([
+    $appointment = Appointment::create([
         'customer_id' => $request->customer_id,
         'staff_id' => $request->staff_id,
         'service_id' => $request->service_id,
@@ -74,18 +77,25 @@ class AppointmentController extends Controller
 
     return response()->json([
         'message' => 'Appointment added',
-        'id' => $id,
+        'id' => $appointment->id,
     ]);
 }
+
 public function update(Request $request, $id)
 {
-    DB::table('appointments')
-        ->where('id', $id)
-        ->update([
-            'staff_id' => $request->staff_id,
-            'appointment_date' => $request->appointment_date,
-            'status' => $request->status,
-        ]);
+    $appointment = Appointment::find($id);
+
+    if (!$appointment) {
+        return response()->json([
+            'message' => 'Appointment not found'
+        ], 404);
+    }
+
+    $appointment->update([
+        'staff_id' => $request->staff_id ?? $appointment->staff_id,
+        'appointment_date' => $request->appointment_date ?? $appointment->appointment_date,
+        'status' => $request->status ?? $appointment->status,
+    ]);
 
     return response()->json([
         'message' => 'Appointment updated',
@@ -94,9 +104,7 @@ public function update(Request $request, $id)
 
 public function destroy($id)
 {
-    DB::table('appointments')
-        ->where('id', $id)
-        ->delete();
+    Appointment::destroy($id);
 
     return response()->json([
         'message' => 'Appointment deleted',
@@ -204,4 +212,5 @@ public function availableSlotsByService($serviceId)
         'slots' => $slots
     ]);
 }
+
 }
