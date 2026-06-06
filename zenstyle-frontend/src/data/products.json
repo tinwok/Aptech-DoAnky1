@@ -1,0 +1,76 @@
+{
+  "hair_products": [
+    {
+      "id": 1,
+      "image": "/images/products/hair-1.jpg",
+      "name": "Wax tạo kiểu matte",
+      "description": "Giữ nếp cả ngày, không bóng dầu.",
+      "price": 120000
+    },
+    {
+      "id": 2,
+      "image": "/images/products/hair-2.jpg",
+      "name": "Dầu gội trị gàu",
+      "description": "Làm sạch sâu, ngăn ngừa gàu hiệu quả.",
+      "price": 95000
+    },
+    {
+      "id": 3,
+      "image": "/images/products/hair-3.jpg",
+      "name": "Pomade bóng cao",
+      "description": "Tạo độ bóng tự nhiên, dễ tạo kiểu.",
+      "price": 150000
+    },
+    {
+      "id": 4,
+      "image": "/images/products/hair-4.jpg",
+      "name": "Dầu xả phục hồi",
+      "description": "Nuôi dưỡng tóc hư tổn, mềm mượt.",
+      "price": 110000
+    },
+    {
+      "id": 5,
+      "image": "/images/products/hair-5.jpg",
+      "name": "Gel vuốt tóc",
+      "description": "Giữ form cứng, phù hợp tóc ngắn.",
+      "price": 85000
+    }
+  ],
+  "skin_products": [
+    {
+      "id": 1,
+      "image": "/images/products/skin-1.jpg",
+      "name": "Sữa rửa mặt nam",
+      "description": "Làm sạch sâu, kiểm soát dầu nhờn.",
+      "price": 130000
+    },
+    {
+      "id": 2,
+      "image": "/images/products/skin-2.jpg",
+      "name": "Kem dưỡng ẩm SPF50",
+      "description": "Dưỡng ẩm và chống nắng suốt ngày dài.",
+      "price": 250000
+    },
+    {
+      "id": 3,
+      "image": "/images/products/skin-3.jpg",
+      "name": "Toner cân bằng da",
+      "description": "Se khít lỗ chân lông, cân bằng độ ẩm.",
+      "price": 180000
+    },
+    {
+      "id": 4,
+      "image": "/images/products/skin-4.jpg",
+      "name": "Serum trị mụn",
+      "description": "Giảm mụn nhanh, ngăn ngừa thâm sẹo.",
+      "price": 320000
+    },
+    {
+      "id": 5,
+      "image": "/images/products/skin-5.jpg",
+      "name": "Kem mắt chống thâm",
+      "description": "Giảm thâm quầng, xóa nếp nhăn vùng mắt.",
+      "price": 290000
+    }
+  ]
+}
