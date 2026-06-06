@@ -13,12 +13,12 @@ function App() {
           {
             id: 1,
             name: "Wax Romano",
-            category: "Wax",
             importQty: 50,
             exportQty: 25,
             stock: 25,
             date: "31/05/2026",
-            price: 150000,
+            importPrice: 100000,
+            salePrice: 150000,
           },
 
           {
@@ -42,7 +42,7 @@ function App() {
             product: "Wax Romano",
             type: "IMPORT",
             quantity: 50,
-            price: 0,
+            price: 100000,
             date: "30/05/2026",
             note: "Nhập kho",
           },
@@ -52,7 +52,7 @@ function App() {
             product: "Wax Romano",
             type: "EXPORT",
             quantity: 25,
-            price: 0,
+            price: 100000,
             date: "31/05/2026",
             note: "Bán cho khách",
           },

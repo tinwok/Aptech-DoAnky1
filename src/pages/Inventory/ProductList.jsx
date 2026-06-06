@@ -2,65 +2,87 @@ import { useState } from "react";
 
 function ProductList({ products, setProducts, transactions }) {
   const [name, setName] = useState("");
-  const [category, setCategory] = useState("");
+  const [supplier, setSupplier] = useState("");
+  const [importPrice, setImportPrice] = useState("");
+  const [salePrice, setSalePrice] = useState("");
   const [quantity, setQuantity] = useState("");
-  const [price, setPrice] = useState("");
+  const [importQty, setImportQty] = useState("");
+  const [exportQty, setExportQty] = useState("");
+  const [stock, setStock] = useState("");
+  const [date, setDate] = useState("");
+
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
 
   const deleteProduct = (id) => {
-    const newProducts = products.filter((item) => item.id !== id);
-    if (quantity <= 0) {
-      alert("Quantity must be greater than 0");
-      return;
+    if (window.confirm("Delete this product?")) {
+      setProducts(products.filter((item) => item.id !== id));
     }
-
-    if (price <= 0) {
-      alert("Price must be greater than 0");
-      return;
-    }
-
-    setProducts(newProducts);
   };
   const editProduct = (product) => {
     setEditId(product.id);
 
-    setName(product.name);
-    setCategory(product.category);
-    setQuantity(product.stock || 0);
-    setPrice(product.price);
-  };
+    setName(product.name || "");
+    const [supplier, setSupplier] = useState("");
 
+    setImportQty(product.importQty || 0);
+
+    setExportQty(product.exportQty || 0);
+
+    setStock(product.stock || 0);
+
+    setDate(product.date || "");
+
+    setImportPrice(product.importPrice || 0);
+
+    setSalePrice(product.salePrice || 0);
+  };
   const addProduct = () => {
-    if (!name || !category || !quantity || !price) {
+    if (!name || !quantity || !importPrice || !salePrice) {
       alert("Vui lòng nhập đầy đủ thông tin");
       return;
     }
-
     const newProduct = {
       id: products.length + 1,
       name,
-      category,
-      quantity,
-      price,
+      supplier,
+      stock: Number(quantity),
+      importQty: 0,
+      exportQty: 0,
+      date: "-",
+      importPrice: Number(importPrice),
+      salePrice: Number(salePrice),
     };
 
     setProducts([...products, newProduct]);
 
     setName("");
-    setCategory("");
+    setSupplier("");
     setQuantity("");
-    setPrice("");
+    setImportPrice("");
+    setSalePrice("");
   };
   const updateProduct = () => {
     const updatedProducts = products.map((item) =>
       item.id === editId
         ? {
             ...item,
-            name,
-            category,
-            quantity,
-            price,
+
+            name: name,
+
+            supplier: supplier,
+
+            importQty: Number(importQty),
+
+            exportQty: Number(exportQty),
+
+            stock: Number(stock),
+
+            date: date,
+
+            importPrice: Number(importPrice),
+
+            salePrice: Number(salePrice),
           }
         : item,
     );
@@ -68,11 +90,16 @@ function ProductList({ products, setProducts, transactions }) {
     setProducts(updatedProducts);
 
     setEditId(null);
+
     setName("");
-    setCategory("");
-    setQuantity("");
-    setPrice("");
+    setImportQty("");
+    setExportQty("");
+    setStock("");
+    setDate("");
+    setImportPrice("");
+    setSalePrice("");
   };
+
   const filteredProducts = products.filter((item) =>
     item.name.toLowerCase().includes(search.toLowerCase()),
   );
@@ -89,18 +116,16 @@ function ProductList({ products, setProducts, transactions }) {
     let totalExport = 0;
 
     productTransactions.forEach((t) => {
-      const value = Number(t.quantity || 0) * Number(t.price || 0);
-
       if (t.type === "IMPORT") {
-        totalImport += value;
+        totalImport += Number(t.quantity || 0) * Number(t.price || 0);
       }
 
       if (t.type === "EXPORT") {
-        totalExport += value;
+        totalExport += Number(t.quantity || 0) * Number(t.price || 0);
       }
     });
 
-    const stockValue = Number(item.stock || 0) * Number(item.price || 0);
+    const stockValue = Number(item.stock || 0) * Number(item.importPrice || 0);
 
     return totalExport - totalImport + stockValue;
   };
@@ -123,23 +148,45 @@ function ProductList({ products, setProducts, transactions }) {
       </div>
 
       <div style={{ marginBottom: "20px" }}>
+        <label className="fw-bold">Product Name</label>
         <input
           type="text"
-          className="row justify-content-center"
-          className="col-md-4"
-          placeholder="Product Name"
+          className="form-control mb-2"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <br />
-        <br />
-
+        <label className="fw-bold">Import Quantity</label>
         <input
-          type="text"
-          placeholder="Category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          type="number"
+          className="form-control mb-2"
+          value={importQty}
+          onChange={(e) => setImportQty(e.target.value)}
         />
+
+        <label className="fw-bold">Export Quantity</label>
+        <input
+          type="number"
+          className="form-control mb-2"
+          value={exportQty}
+          onChange={(e) => setExportQty(e.target.value)}
+        />
+        <label className="fw-bold">Current Stock</label>
+        <input
+          type="number"
+          className="form-control mb-2"
+          value={stock}
+          onChange={(e) => setStock(e.target.value)}
+        />
+
+        <label className="fw-bold">Last Update Date</label>
+        <input
+          type="date"
+          className="form-control mb-2"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+        <br />
+        <br />
 
         <br />
         <br />
@@ -156,9 +203,19 @@ function ProductList({ products, setProducts, transactions }) {
 
         <input
           type="number"
-          placeholder="Price"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
+          placeholder="Import Price"
+          value={importPrice}
+          onChange={(e) => setImportPrice(e.target.value)}
+        />
+
+        <br />
+        <br />
+
+        <input
+          type="number"
+          placeholder="Sale Price"
+          value={salePrice}
+          onChange={(e) => setSalePrice(e.target.value)}
         />
 
         <br />
@@ -181,12 +238,13 @@ function ProductList({ products, setProducts, transactions }) {
           <tr>
             <th>ID</th>
             <th>Product Name</th>
-            <th>Category</th>
+            <th>Supplier</th>
             <th>Import</th>
             <th>Export</th>
             <th>Stock</th>
             <th>Date</th>
-            <th>Price</th>
+            <th>Import Price</th>
+            <th>Sale Price</th>
             <th>Profit</th>
             <th>Status</th>
             <th>Action</th>
@@ -198,12 +256,15 @@ function ProductList({ products, setProducts, transactions }) {
             <tr key={item.id}>
               <td>{item.id}</td>
               <td>{item.name}</td>
-              <td>{item.category}</td>
+              <td>{item.supplier || "-"}</td>
               <td>{item.importQty || 0}</td>
               <td>{item.exportQty || 0}</td>
               <td>{item.stock}</td>
               <td>{item.date || "-"}</td>
-              <td>{Number(item.price || 0).toLocaleString()}đ</td>
+
+              <td>{Number(item.importPrice || 0).toLocaleString()}đ</td>
+
+              <td>{Number(item.salePrice || 0).toLocaleString()}đ</td>
 
               <td>{calculateProfit(item).toLocaleString()}đ</td>
               <td>

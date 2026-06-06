@@ -6,6 +6,7 @@ function TransactionList({
   setTransactions,
 }) {
   const [product, setProduct] = useState("");
+  const [supplier, setSupplier] = useState("");
   const [type, setType] = useState("IMPORT");
   const [quantity, setQuantity] = useState("");
   const [date, setDate] = useState("");
@@ -30,6 +31,8 @@ function TransactionList({
       id: transactions.length + 1,
 
       product,
+
+      supplier,
 
       type,
 
@@ -70,7 +73,12 @@ function TransactionList({
               ? (item.stock || 0) + Number(quantity)
               : (item.stock || 0) - Number(quantity),
 
-          date,
+          date: date,
+
+          importPrice:
+            type === "IMPORT" ? Number(price) : item.importPrice || 0,
+
+          salePrice: type === "EXPORT" ? Number(price) : item.salePrice || 0,
         };
       });
 
@@ -82,19 +90,18 @@ function TransactionList({
 
         name: product,
 
-        category: "Unknown",
-
         importQty: type === "IMPORT" ? Number(quantity) : 0,
 
         exportQty: type === "EXPORT" ? Number(quantity) : 0,
 
         stock: type === "IMPORT" ? Number(quantity) : 0,
 
-        date,
+        date: date,
 
-        price: 0,
+        importPrice: type === "IMPORT" ? Number(price) : 0,
+
+        salePrice: type === "EXPORT" ? Number(price) : 0,
       };
-
       setProducts([...products, newProduct]);
     }
 
@@ -128,6 +135,8 @@ function TransactionList({
             ...row,
 
             product,
+
+            supplier: supplier,
 
             type,
 
@@ -252,6 +261,7 @@ function TransactionList({
           <tr>
             <th>ID</th>
             <th>Product</th>
+            <th>Supplier</th>
             <th>Type</th>
             <th>Quantity</th>
             <th>Date</th>
@@ -266,6 +276,7 @@ function TransactionList({
             <tr key={item.id}>
               <td>{item.id}</td>
               <td>{item.product}</td>
+              <td>{item.supplier || "-"}</td>
               <td>{item.type}</td>
               <td>{item.quantity}</td>
               <td>{item.date}</td>
