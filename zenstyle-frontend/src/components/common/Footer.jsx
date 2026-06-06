@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom";
 
 const NAV_LINKS = [
-  { label: "Về chúng tôi", path: "/ve-chung-toi" },
-  { label: "Sản phẩm", path: "/san-pham" },
-  { label: "Nhân viên", path: "/nhan-vien" },
-  { label: "Đặt lịch", path: "/dat-lich" },
+  { label: "About Us", path: "/about-us" },
+  { label: "Services", path: "/services" },
+  { label: "Staff", path: "/staff" },
+  { label: "Bokking", path: "/booking" },
 ];
 
 const CONTACT_INFO = [
@@ -30,7 +30,7 @@ const CONTACT_INFO = [
         />
       </svg>
     ),
-    text: "123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh",
+    text: "123 Nguyen Hue str, Dist 1, Ho Chi Minh City",
   },
   {
     icon: (
@@ -87,7 +87,7 @@ const CONTACT_INFO = [
         />
       </svg>
     ),
-    text: "Thứ 2 - Chủ nhật: 8:00 - 21:00",
+    text: "Monday - Sunday: 8:00 - 21:00",
   },
 ];
 
@@ -122,15 +122,14 @@ export default function Footer() {
               </span>
             </NavLink>
             <p className="font-[var(--font-sans)] text-sm text-[var(--color-zen-text-muted)] leading-relaxed">
-              Hệ thống salon tóc chuyên nghiệp, mang đến trải nghiệm chăm sóc
-              đẳng cấp.
+              A professional hair salon system, offering a premium experience.
             </p>
           </div>
 
-          {/* Thông tin liên hệ */}
+          {/* Contact Us */}
           <div className="flex flex-col gap-4">
             <h4 className="font-[var(--font-logo)] text-base tracking-wider uppercase text-[var(--color-zen-accent)] pb-2 border-b border-[var(--color-zen-accent)]/30 ">
-              Liên hệ
+              Contact Us
             </h4>
             <ul className="flex flex-col gap-4">
               {CONTACT_INFO.map((info, i) => (
@@ -153,7 +152,7 @@ export default function Footer() {
               text-[var(--color-zen-accent)]
               pb-2 border-b border-[var(--color-zen-accent)]/30"
             >
-              Khám phá
+              Explore
             </h4>
             <ul className="flex flex-col gap-3">
               {NAV_LINKS.map((link) => (
@@ -186,7 +185,7 @@ export default function Footer() {
               text-[var(--color-zen-accent)]
               pb-2 border-b border-[var(--color-zen-accent)]/30"
             >
-              Tìm chúng tôi
+              See Us
             </h4>
             <div className="w-full h-48 border border-[var(--color-zen-accent)]/30 overflow-hidden">
               <iframe

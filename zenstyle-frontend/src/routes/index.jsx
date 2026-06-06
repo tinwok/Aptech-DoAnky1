@@ -14,10 +14,10 @@ const router = createBrowserRouter([
     element: <MainLayout />,
     children: [
       { index: true, element: <HomePage /> },
-      { path: "ve-chung-toi", element: <AboutPage /> },
-      { path: "san-pham", element: <ServicesPage /> },
-      { path: "nhan-vien", element: <StaffPage /> },
-      { path: "dat-lich", element: <BookingPage /> },
+      { path: "about-us", element: <AboutPage /> },
+      { path: "services", element: <ServicesPage /> },
+      { path: "staff", element: <StaffPage /> },
+      { path: "booking", element: <BookingPage /> },
     ],
   },
 ]);

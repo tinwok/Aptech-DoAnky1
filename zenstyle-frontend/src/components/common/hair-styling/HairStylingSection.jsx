@@ -1,6 +1,6 @@
 import Haircutting from "./Haircutting";
 
-const TABS = [{ label: "Cắt tóc", component: <Haircutting /> }];
+const TABS = [{ label: "Haircutting", component: <Haircutting /> }];
 
 export default function HairStylingSection() {
   return (

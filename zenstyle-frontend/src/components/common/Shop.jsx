@@ -54,7 +54,7 @@ export default function Shop() {
             text-[var(--color-zen-primary)] tracking-wide mb-3
           "
           >
-            Sản phẩm
+            Products
           </h2>
           <div className="w-16 h-0.5 bg-[var(--color-zen-accent)] mx-auto" />
         </div>
@@ -92,7 +92,7 @@ export default function Shop() {
               text-[var(--color-zen-primary)]/60
             "
             >
-              {items.length} sản phẩm
+              {items.length} product
             </span>
           )}
         </div>
@@ -111,7 +111,7 @@ export default function Shop() {
               transition-all duration-200
               shadow-md
             "
-            aria-label="Trượt trái"
+            aria-label="To the left"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -172,7 +172,7 @@ export default function Shop() {
               transition-all duration-200
               shadow-md
             "
-            aria-label="Trượt phải"
+            aria-label="To the right"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

@@ -28,7 +28,7 @@ export default function Haircutting() {
         <ServiceCard
           key={item.id}
           item={item}
-          moreInfoLink="/san-pham/hair-styling"
+          moreInfoLink="/services/hair-styling"
         />
       ))}
     </div>

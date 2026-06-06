@@ -2,18 +2,18 @@ import { NavLink } from "react-router-dom";
 import { NavButton, NavDropdown, LoginButton } from "../../ui";
 
 const NAV_ITEMS = [
-  { label: "VỀ CHÚNG TÔI", path: "/ve-chung-toi", type: "link" },
+  { label: "ABOUT US", path: "/about-us", type: "link" },
   {
-    label: "SẢN PHẨM",
+    label: "SERVICES",
     type: "dropdown",
     children: [
-      { label: "Hair Styling", path: "/san-pham/hair-styling" },
-      { label: "Skin Care", path: "/san-pham/skin-care" },
-      { label: "Beauty Treatment", path: "/san-pham/beauty-treatment" },
+      { label: "Hair Styling", path: "/services/hair-styling" },
+      { label: "Skin Care", path: "/services/skin-care" },
+      { label: "Beauty Treatment", path: "/services/beauty-treatment" },
     ],
   },
-  { label: "NHÂN VIÊN", path: "/nhan-vien", type: "link" },
-  { label: "ĐẶT LỊCH", path: "/dat-lich", type: "link" },
+  { label: "STAFF", path: "/staff", type: "link" },
+  { label: "BOOKING", path: "/booking", type: "link" },
 ];
 
 export default function Header() {

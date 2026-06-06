@@ -3,78 +3,78 @@
     {
       "id": 1,
       "image": "/images/hero/gioi_thieu.png",
-      "title": "Đẳng cấp trong từng đường kẻ",
-      "subtitle": "Trải nghiệm dịch vụ cắt tóc chuyên nghiệp",
-      "cta": "Về chúng tôi",
-      "cta_link": "/ve-chung-toi"
+      "title": "Classy in every detail.",
+      "subtitle": "Experience premium haircutting services",
+      "cta": "About us",
+      "cta_link": "/about-us"
     },
     {
       "id": 2,
       "image": "/images/hero/staffs.png",
-      "title": "Phong cách định hình cá tính",
-      "subtitle": "Đội ngũ nhân viên được đào tạo chuyên sâu",
-      "cta": "Đội ngũ nhân viên",
-      "cta_link": "/nhan-vien"
+      "title": "Style defines personality.",
+      "subtitle": "High standard staff",
+      "cta": "Staff",
+      "cta_link": "/staff"
     },
     {
       "id": 3,
       "image": "/images/hero/khong_gian_thu_gian_dang_cap.png",
-      "title": "Không gian thư giãn đẳng cấp",
-      "subtitle": "Hệ thống salon tiêu chuẩn 5 sao",
-      "cta": "Hệ thống salon"
+      "title": "A luxurious relaxation space",
+      "subtitle": "A 5 start salon operation.",
+      "cta": "Salon operation."
     },
     {
       "id": 4,
       "image": "/images/hero/hairstyling.png",
-      "title": "Tạo mẫu tóc",
-      "subtitle": "Tạo mẫu tóc chuyên nghiệp",
-      "cta": "Dich vụ tạo mẫu tóc",
-      "cta_link": "/san-pham/hair-styling"
+      "title": "Hairstyling",
+      "subtitle": "Premium hairstyling",
+      "cta": "Hairstyling Service",
+      "cta_link": "/services/hair-styling"
     },
     {
       "id": 5,
       "image": "/images/hero/skin_care.png",
-      "title": "Chăm sóc da",
-      "subtitle": "Chăm sóc da",
-      "cta": "Dich vụ chăm sóc da",
-      "cta_link": "/san-pham/skin-care"
+      "title": "Skin Care",
+      "subtitle": "Skin Care",
+      "cta": "Skin Care Service",
+      "cta_link": "/services/skin-care"
     },
     {
       "id": 6,
       "image": "/images/hero/beautry_treatements.png",
-      "title": "Chăm sóc sắc đẹp",
-      "subtitle": "Chăm sóc sắc đẹp",
-      "cta": "Dich vụ chăm sóc sắc đẹp",
-      "cta_link": "/san-pham/beauty-treatment"
+      "title": "Beauty Treatment",
+      "subtitle": "Beauty Treatment",
+      "cta": "Beauty treatment service",
+      "cta_link": "/services/beauty-treatment"
     }
   ],
   "hair_cutting": [
     {
       "id": 1,
       "image": "/public/images/hair_styling/hairstyling.png",
-      "name": "Cắt tóc Classic",
-      "description": "Kiểu tóc cổ điển, gọn gàng và lịch sự cho mọi dịp.",
+      "name": "Classic Style Haircutting",
+      "description": "Classic Style Haircutting, Neat and elegant anywhere anytime.",
       "price": 100000
     },
     {
       "id": 2,
       "image": "/public/images/hair_styling/haircuttinglayer.png",
-      "name": "Cắt tóc Layer",
-      "description": "Tạo độ bồng bềnh tự nhiên, phù hợp với khuôn mặt dài.",
+      "name": "Layer Style Haircutting",
+      "description": "Creates a natural, voluminous and suitable for long faces.",
       "price": 130000
     },
     {
       "id": 3,
       "image": "/public/images/hair_styling/haircuttingundercut.png",
-      "name": "Cắt tóc Undercut",
-      "description": "Phong cách hiện đại, cạo sát hai bên tạo điểm nhấn.",
+      "name": "Undercut Style Haircutting",
+      "description": "Modern style, make a point.",
       "price": 170000
     },
     {
       "id": 4,
       "image": "/public/images/hair_styling/haircoloring.png",
-      "name": "Nhuộm tóc hiện đại.",
-      "description": "Màu tóc mới, phong cách mới.",
+      "name": "Modern hair coloring.",
+      "description": "Modern hair coloring, Modern style.",
       "price": 150000
     }
   ],
@@ -82,22 +82,22 @@
     {
       "id": 1,
       "image": "/public/images/skin_care/skin_massage.png",
-      "name": "Massage da mặt",
-      "description": "Giúp da mặt hồi sinh.",
+      "name": "Massage Skin Face",
+      "description": "Ressurectting the skin of your face.",
       "price": 200000
     },
     {
       "id": 3,
       "image": "/public/images//skin_care/white_skin.png",
-      "name": "Làm trắng da mặt",
-      "description": "Giúp da mặt trắng sáng.",
+      "name": "White Skin Face.",
+      "description": "Make your face bright and shining.",
       "price": 250000
     },
     {
       "id": 4,
       "image": "/public/images//skin_care/skinmoituring.png",
-      "name": "Dưỡng ẩm da mặt",
-      "description": "Giúp da mặt căng tròn.",
+      "name": "Moisture Skin Face.",
+      "description": "Make your face firmed and plumped.",
       "price": 250000
     }
   ],
@@ -106,21 +106,21 @@
       "id": 1,
       "image": "/public/images/beauty_treatment/beauty_nail.png",
       "name": "Nails",
-      "description": "Chăm sóc và trang điểm móng tay.",
+      "description": "Take care and nail.",
       "price": 100000
     },
     {
       "id": 2,
       "image": "/public/images/beauty_treatment/beauty_earwax.png",
       "name": "Vệ sinh tai",
-      "description": "Làm sạch và ngăn ngừa chất bẩn trong tai.",
+      "description": "Clean and defend your ears.",
       "price": 120000
     },
     {
       "id": 3,
       "image": "/public/images/beauty_treatment/beauty_hairwash.png",
-      "name": "Gội đầu thư giãn",
-      "description": "Thư giãn cùng mái tóc sạch, mượt mà.",
+      "name": "Relaxation hairwashing",
+      "description": "Enjoy and relax a clean and beautiful hair.",
       "price": 150000
     }
   ],
@@ -128,36 +128,36 @@
     {
       "id": 1,
       "image": "/images/products/hair_products/wax.png",
-      "name": "Wax tạo kiểu matte",
-      "description": "Giữ nếp cả ngày, không bóng dầu.",
+      "name": "Style Matte Wax",
+      "description": "Hold style, no oil.",
       "price": 120000
     },
     {
       "id": 2,
       "image": "/images/products/hair_products/shampoo.png",
-      "name": "Dầu gội trị gàu",
-      "description": "Làm sạch sâu, ngăn ngừa gàu hiệu quả.",
+      "name": "Anti-dandruff shampoo",
+      "description": "Deep cleansing, effectively prevents dandruff.",
       "price": 95000
     },
     {
       "id": 3,
       "image": "/images/products/hair_products/pomade.png",
-      "name": "Pomade bóng cao",
-      "description": "Tạo độ bóng tự nhiên, dễ tạo kiểu.",
+      "name": "High Shine Pomade",
+      "description": "Make a natural shine style.",
       "price": 150000
     },
     {
       "id": 4,
       "image": "/images/products/hair_products/hair-conditioner.png",
-      "name": "Dầu xả phục hồi",
-      "description": "Nuôi dưỡng tóc hư tổn, mềm mượt.",
+      "name": "Restorative conditioner",
+      "description": "Reborn broken hair",
       "price": 110000
     },
     {
       "id": 5,
       "image": "/images/products/hair_products/gel.png",
-      "name": "Gel vuốt tóc",
-      "description": "Giữ form cứng, phù hợp tóc ngắn.",
+      "name": "Hair Gel.",
+      "description": "Holds its shape well, suitable for short hair.",
       "price": 85000
     }
   ],

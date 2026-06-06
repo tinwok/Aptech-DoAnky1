@@ -1,6 +1,6 @@
 import BeautyTreatment from "./BeautyTreatment";
 
-const TABS = [{ label: "Chăm sóc sắc đẹp", component: <BeautyTreatment /> }];
+const TABS = [{ label: "Beauty Treatment", component: <BeautyTreatment /> }];
 
 export default function BeautyTreatmentSection() {
   return (
